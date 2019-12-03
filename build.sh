@@ -13,10 +13,12 @@ ls -l
 # FOR EXAMPLE:
 
 echo "get dependencies"
-go get "github.com/gin-gonic/gin"
+go get github.com/gin-gonic/gin
+go get github.com/gin-contrib/static
+go get github.com/sirupsen/logrus
 
 # create the application binary that eb uses
-go build -o bin/application application.go
+go build -o bin/application server.go
 
 chmod +x bin/application
 

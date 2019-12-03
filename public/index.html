@@ -1,12 +1,84 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
-  <title>Welcome</title>
+    <title>wordlist</title>
 </head>
 <body>
-    <h2>some data</h2>
-	<h2>this is the first time</h2>
-	<h2>after some hard times</h2>
-	<h2>some data</h2>
+
+    <h3>api endpoints</h3>
+
+    <table border="0">
+        <tr valign="top">
+            <td><b>action</b></td>
+            <td><b>endpoint</b></td>
+            <td><b>description</b></td>
+        </tr>
+        <tr valign="top">
+            <td>GET</td>
+            <td>/words</td>
+            <td>view list of words</td>
+        </tr>
+        <tr valign="top">
+            <td>GET</td>
+            <td>/words?format={format}</td>
+            <td>view list of words using {format}=json|csv</td>
+        </tr>
+        <tr valign="top">
+            <td>GET</td>
+            <td>/words/{id}</td>
+            <td>view words by {id}</td>
+        </tr>
+        <tr valign="top">
+            <td>POST</td>
+            <td>/words</td>
+            <td>add word to list<br>request body contains json(word)</td>
+        </tr>
+        <tr valign="top">
+            <td>DELETE</td>
+            <td>/words/{id}</td>
+            <td>delete word with {id} from list</td>
+        </tr>
+        <tr valign="top">
+            <td>GET</td>
+            <td>/tests</td>
+            <td>view list of tests</td>
+        </tr>
+        <tr valign="top">
+            <td>GET</td>
+            <td>/tests?name={name}</td>
+            <td>view tests by name</td>
+        </tr>
+        <tr valign="top">
+            <td>PUT</td>
+            <td>/wordlist</td>
+            <td>replace existing word list with new one<br>request body contains json(wordlist)</td>
+        </tr>
+        <tr valign="top">
+            <td>DELETE</td>
+            <td>/wordlist</td>
+            <td>delete existing word list</td>
+        </tr>
+    </table>
+
+    <h3>used tools</h3>
+    <ul>
+        <li>IDE: VS Code</li>
+        <li>API definition: swagger</li>
+        <li>manual Testing: Postman</li>
+        <li>cloud experience: IBM</li>
+        <li>learning:
+                <ul>
+                    <li>
+                        <a href="https://dev.to/moficodes/build-your-first-rest-api-with-go-2gcj">golang and REST</a>
+                    </li>
+                    <li>
+                        <a href="https://idratherbewriting.com/learnapidoc/restapispecifications.html">OpenAPI</a>
+                    </li>
+                    <li>
+                        <a href="https://medium.com/@kelvin_sp/building-and-testing-a-rest-api-in-golang-using-gorilla-mux-and-mysql-1f0518818ff6">golang and Testing</a>
+                    </li>
+                </ul>
+        </li>
+    </ul>
 </body>
 </html>
