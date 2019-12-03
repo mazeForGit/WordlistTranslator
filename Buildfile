@@ -1,3 +1,3 @@
-make: echo "path = " $PATH
 make: ls -l
-make: ./build.sh
+make: go build -o bin/application application.go
+make: ls -l
