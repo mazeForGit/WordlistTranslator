@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 echo "starting build.sh"
 
 # Stops the process if something fails
