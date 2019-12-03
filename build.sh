@@ -4,6 +4,7 @@ echo "starting build.sh"
 echo "make dir"
 mkdir bin
 ls -ls
+echo $PATH
 
 # Stops the process if something fails
 # set -xe

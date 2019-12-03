@@ -1,1 +1,2 @@
-make: ./build.sh
+make: build.sh
+make: echo $PATH
