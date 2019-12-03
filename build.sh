@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "starting build.sh"
-
+echo "starting build.sh"
 # Stops the process if something fails
 # set -xe
 
