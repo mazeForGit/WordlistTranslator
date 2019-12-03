@@ -1,6 +1,10 @@
 #!/bin/bash
 echo "starting build.sh"
-echo "starting build.sh"
+
+echo "make dir"
+mkdir bin
+ls -ls
+
 # Stops the process if something fails
 # set -xe
 
@@ -12,7 +16,7 @@ echo "get dependencies"
 # go get "github.com/gin-gonic/gin"
 
 # create the application binary that eb uses
-GOOS=linux GOARCH=amd64 go build -o bin/application -ldflags="-s -w"
+go build -o bin/application application.go
 
 chmod +x bin/application
 
