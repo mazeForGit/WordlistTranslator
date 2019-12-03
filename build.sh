@@ -2,8 +2,6 @@
 echo "starting build.sh"
 
 echo "make dir"
-mkdir bin
-ls -ls
 
 
 # Stops the process if something fails
