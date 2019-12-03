@@ -1,1 +1,1 @@
-make: build.sh
+make: echo "buildfile .."
