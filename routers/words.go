@@ -3,7 +3,7 @@ package routers
 import (
 	"strconv"
 	"github.com/gin-gonic/gin"
-	data "./data"
+	data "github.com/mazeForGit/WordlistExtractor/data"
 	//"fmt"
 	//"io/ioutil"
 )

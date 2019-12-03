@@ -3,7 +3,7 @@ package routers
 import (
 	"strconv"
 	"github.com/gin-gonic/gin"
-	data "./data"
+	data "github.com/mazeForGit/WordlistExtractor/data"
 )
 func WordListDELETE(c *gin.Context) {
 	var s data.Status

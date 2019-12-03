@@ -2,7 +2,7 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
-	data "./data"
+	data "github.com/mazeForGit/WordlistExtractor/data"
 )
 
 func TestsGET(c *gin.Context) {
