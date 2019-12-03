@@ -1,7 +1,8 @@
 #!/bin/bash
 echo "starting build.sh"
 
-echo "make dir"
+echo "ls before .."
+ls -l
 
 
 # Stops the process if something fails
@@ -12,11 +13,15 @@ echo "make dir"
 # FOR EXAMPLE:
 
 echo "get dependencies"
-# go get "github.com/gin-gonic/gin"
+go get "github.com/gin-gonic/gin"
 
 # create the application binary that eb uses
 go build -o bin/application application.go
 
 chmod +x bin/application
+
+echo "ls after .."
+cd ./bin
+ls -l
 
 echo "build successful"
