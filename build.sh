@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+echo "starting build.sh"
+
 # Stops the process if something fails
 # set -xe
 
