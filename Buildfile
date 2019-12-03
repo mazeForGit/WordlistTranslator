@@ -1,2 +1,3 @@
-make: build.sh
-make: echo $PATH
+make: echo "path = " $PATH
+make: ls -l
+make: ./build.sh
