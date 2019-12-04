@@ -1,3 +1,2 @@
-make: echo "path = " $PATH
-make: whoami
+make: echo "the Buildfile invokes build.sh"
 make: ./build.sh
