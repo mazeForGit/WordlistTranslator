@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"github.com/gin-gonic/gin"
 	data "github.com/mazeForGit/WordlistExtractor/data"
-	//"fmt"
+	"fmt"
 	//"io/ioutil"
 )
 
@@ -50,16 +50,43 @@ func WordsByIdGET(c *gin.Context) {
 func WordsGET(c *gin.Context) {
 	var s data.Status
 	var vars map[string][]string
-
 	vars = c.Request.URL.Query()
+	var format string = ""
+	var name string = ""
+	
 	if _, ok := vars["format"]; ok {
-		// different format
-		format := c.Request.URL.Query().Get("format")
+		format = c.Request.URL.Query().Get("format")
+	} 
+	if _, ok := vars["name"]; ok {
+		name = c.Request.URL.Query().Get("name")
+	}
+	
+	
+	fmt.Println("format = " + format + ", name = " + name)
 		
+	if format != "" && name == "" {
+		// complete list by format
 		if format == "json" {
 			c.JSON(200, data.GlobalWordList.Words)
 		} else if format == "csv" {
-			c.String(200, data.GetWordsListAsCsv())
+			c.String(200, data.GetWordsListAsCsv(""))
+		} else {
+			s = data.Status{Code: 422, Text: "unknown format = " + format}
+			c.JSON(422, s)
+		}
+	} else if format == "" && name != "" {
+		// look up by name
+		w, err := data.GlobalWordList.GetWordByName(name)
+		if (err != nil) {
+			s = data.Status{Code: 200, Text: "not found name = " + name}
+			c.JSON(200, s)
+			return
+		}
+		c.JSON(200, w)
+	} else if format != "" && name != "" {
+		// complete list by format and name
+		if format == "csv" {
+			c.String(200, data.GetWordsListAsCsv(name))
 		} else {
 			s = data.Status{Code: 422, Text: "unknown format = " + format}
 			c.JSON(422, s)

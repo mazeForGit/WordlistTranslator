@@ -87,7 +87,7 @@ func (wl WordList) GetWordById(id int) (Word, error) {
 	}
     return w, errors.New("not found")
 }
-func (wl WordList) getWordByName(name string) (Word, error) {
+func (wl WordList) GetWordByName(name string) (Word, error) {
     var w Word
 	
 	for i := 0; i < len(wl.Words); i++ {

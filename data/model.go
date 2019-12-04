@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"sort"
+	"strings"
 )
 
 var GlobalWordList WordList
@@ -93,10 +94,13 @@ func RebuildWordAndTestIndex(wl WordList) WordList {
 	
 	return wl
 }
-func GetWordsListAsCsv() string {
+func GetWordsListAsCsv(name string) string {
+	fmt.Println("name = " + name)
 	var list []string
 	for i := 0; i < len(GlobalWordList.Words); i++ {
-		list = append(list, GlobalWordList.Words[i].Name)
+		if name == "" || strings.HasPrefix(GlobalWordList.Words[i].Name, name) {
+			list = append(list, GlobalWordList.Words[i].Name)
+		} 
 	}
 	sort.Strings(list)
 
