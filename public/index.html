@@ -23,6 +23,16 @@
             <td>/words?format={format}</td>
             <td>view list of words using {format}=json|csv</td>
         </tr>
+		<tr valign="top">
+            <td>GET</td>
+            <td>/words?name={name}</td>
+            <td>view word by {name}</td>
+        </tr>
+		<tr valign="top">
+            <td>GET</td>
+            <td>/words?name={name}&format={format}</td>
+            <td>view list of words by Prefix{name} using {format}=csv</td>
+        </tr>
         <tr valign="top">
             <td>GET</td>
             <td>/words/{id}</td>
@@ -51,7 +61,8 @@
         <tr valign="top">
             <td>PUT</td>
             <td>/wordlist</td>
-            <td>replace existing word list with new one<br>request body contains json(wordlist)</td>
+            <td>replace existing word list with new one
+<br>request body contains json(wordlist)</td>
         </tr>
         <tr valign="top">
             <td>DELETE</td>
@@ -65,7 +76,7 @@
         <li>IDE: VS Code</li>
         <li>API definition: swagger</li>
         <li>manual Testing: Postman</li>
-        <li>cloud experience: IBM</li>
+        <li>cloud experience: IBM, AWS EB</li>
         <li>learning:
                 <ul>
                     <li>
