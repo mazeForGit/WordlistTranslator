@@ -53,6 +53,8 @@ func WordsGET(c *gin.Context) {
 	vars = c.Request.URL.Query()
 	var format string = ""
 	var name string = ""
+	var testOnly bool = false
+	var newOnly bool = false
 	
 	if _, ok := vars["format"]; ok {
 		format = c.Request.URL.Query().Get("format")
@@ -60,16 +62,27 @@ func WordsGET(c *gin.Context) {
 	if _, ok := vars["name"]; ok {
 		name = c.Request.URL.Query().Get("name")
 	}
+	if _, ok := vars["testOnly"]; ok {
+		t := c.Request.URL.Query().Get("testOnly")
+		if t == "true" {
+			testOnly = true
+		} 
+	}
+	if _, ok := vars["newOnly"]; ok {
+		t := c.Request.URL.Query().Get("newOnly")
+		if t == "true" {
+			newOnly = true
+		} 
+	}
 	
-	
-	fmt.Println("format = " + format + ", name = " + name)
+	fmt.Println("parsing vars .. format = " + format + ", name = " + name + ", testOnly = " + strconv.FormatBool(testOnly) + ", newOnly = " + strconv.FormatBool(newOnly))
 		
 	if format != "" && name == "" {
 		// complete list by format
 		if format == "json" {
 			c.JSON(200, data.GlobalWordList.Words)
 		} else if format == "csv" {
-			c.String(200, data.GetWordsListAsCsv(""))
+			c.String(200, data.GetWordsListAsCsv("", testOnly, newOnly))
 		} else {
 			s = data.Status{Code: 422, Text: "unknown format = " + format}
 			c.JSON(422, s)
@@ -85,15 +98,17 @@ func WordsGET(c *gin.Context) {
 		c.JSON(200, w)
 	} else if format != "" && name != "" {
 		// complete list by format and name
-		if format == "csv" {
-			c.String(200, data.GetWordsListAsCsv(name))
-		} else {
+		if format == "json" {
+			c.JSON(200, data.GetWordsList(name, testOnly, newOnly))
+		} else if format == "csv" {
+			c.String(200, data.GetWordsListAsCsv(name, testOnly, newOnly))
+		}else {
 			s = data.Status{Code: 422, Text: "unknown format = " + format}
 			c.JSON(422, s)
 		}
 	} else {
 		// default is json
-		c.JSON(200, data.GlobalWordList.Words)
+		c.JSON(200, data.GetWordsList(name, testOnly, newOnly))
 	}
 }
 func WordsPOST(c *gin.Context) {

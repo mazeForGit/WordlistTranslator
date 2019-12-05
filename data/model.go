@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+	"strconv"
 )
 
 var GlobalWordList WordList
@@ -94,12 +95,46 @@ func RebuildWordAndTestIndex(wl WordList) WordList {
 	
 	return wl
 }
-func GetWordsListAsCsv(name string) string {
-	fmt.Println("name = " + name)
+func GetWordsList(name string, testOnly bool, newOnly bool) []Word {
+	fmt.Println("GetWordsList .. name = " + name + ", testOnly = " + strconv.FormatBool(testOnly) + ", newOnly = " + strconv.FormatBool(newOnly))
+
+	var wl []Word
+	
+	for i := 0; i < len(GlobalWordList.Words); i++ {
+		if name == "" || strings.HasPrefix(GlobalWordList.Words[i].Name, name) {
+			if (!testOnly && !newOnly) {
+				wl = append(wl, GlobalWordList.Words[i])
+			} else if (testOnly && newOnly) {
+				if (GlobalWordList.Words[i].Tests != nil && GlobalWordList.Words[i].New) {
+					wl = append(wl, GlobalWordList.Words[i])
+				}
+			} else {
+				if ((testOnly && GlobalWordList.Words[i].Tests != nil) || (newOnly && GlobalWordList.Words[i].New)) {
+					wl = append(wl, GlobalWordList.Words[i])
+				}
+			}
+		} 
+	}
+
+	return wl
+}
+func GetWordsListAsCsv(name string, testOnly bool, newOnly bool) string {
+	fmt.Println("GetWordsListAsCsv .. name = " + name + ", testOnly = " + strconv.FormatBool(testOnly) + ", newOnly = " + strconv.FormatBool(newOnly))
+
 	var list []string
 	for i := 0; i < len(GlobalWordList.Words); i++ {
 		if name == "" || strings.HasPrefix(GlobalWordList.Words[i].Name, name) {
-			list = append(list, GlobalWordList.Words[i].Name)
+			if (!testOnly && !newOnly) {
+				list = append(list, GlobalWordList.Words[i].Name)
+			} else if (testOnly && newOnly) {
+				if (GlobalWordList.Words[i].Tests != nil && GlobalWordList.Words[i].New) {
+					list = append(list, GlobalWordList.Words[i].Name)
+				}
+			} else {
+				if ((testOnly && GlobalWordList.Words[i].Tests != nil) || (newOnly && GlobalWordList.Words[i].New)) {
+					list = append(list, GlobalWordList.Words[i].Name)
+				}
+			}
 		} 
 	}
 	sort.Strings(list)

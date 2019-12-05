@@ -30,8 +30,10 @@
         </tr>
 		<tr valign="top">
             <td>GET</td>
-            <td>/words?name={name}&format={format}</td>
-            <td>view list of words by Prefix{name} using {format}=csv</td>
+            <td>/words?name={name}&format={format}&testOnly={testOnly}&newOnly={newOnly}</td>
+            <td>view list of words by Prefix{name} using {format}=json|csv
+				<br>{testOnly}=true|false (default) inlcude only words where tests are present
+				<br>{newOnly}=true|false (default) inlcude only words where new is set</td>
         </tr>
         <tr valign="top">
             <td>GET</td>
@@ -41,7 +43,8 @@
         <tr valign="top">
             <td>POST</td>
             <td>/words</td>
-            <td>add word to list<br>request body contains json(word)</td>
+            <td>add word to list
+				<br>request body contains json(word)</td>
         </tr>
         <tr valign="top">
             <td>DELETE</td>
@@ -62,15 +65,22 @@
             <td>PUT</td>
             <td>/wordlist</td>
             <td>replace existing word list with new one
-<br>request body contains json(wordlist)</td>
+				<br>request body contains json(wordlist)</td>
         </tr>
         <tr valign="top">
             <td>DELETE</td>
-            <td>/wordlist</td>
-            <td>delete existing word list</td>
+            <td>/wordlist?words={words}&tests={tests}</td>
+            <td>delete from word list based on selection
+				<br>{words}=true|false
+				<br>{tests}=true|false</td>
         </tr>
     </table>
 
+	<h3>aim and architecture</h3>
+	
+	The aim is to play around with various cloud providers and bring an real use case to life.
+	<br>The <a html="https://wordlist.eu-gb.mybluemix.net/" extractor</a> app (hosted at cloud using IBM) connects to server (<a href="https://www.dwds.de" dwds</a>} and extracts words one by another. Selected words {adjectives} are extracted and send to <a href="http://wordlist-dev.eu-central-1.elasticbeanstalk.com/" storage app</a> {hosted at cloud using AWS EB}.
+	
     <h3>used tools</h3>
     <ul>
         <li>IDE: VS Code</li>
