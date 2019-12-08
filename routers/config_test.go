@@ -34,7 +34,7 @@ func Test_ConfigPOST_validData(t *testing.T) {
 	router := gin.Default()
 	router.POST("/config", ConfigPOST)
 
-	wrd := data.Config{
+	c := data.Config{
 			RequestExecution: false, 
 			WordListUrl: "test", 
 			WordListExtractorUrl: "test", 
@@ -44,8 +44,8 @@ func Test_ConfigPOST_validData(t *testing.T) {
 			CountWordsDetected: 0,
     		CountWordsRequested: 0,
     		CountWordsInserted: 0}
-
-	payload, err := json.Marshal(wrd)
+			
+	payload, err := json.Marshal(c)
 
 	if err != nil {
 		w := httptest.NewRecorder()

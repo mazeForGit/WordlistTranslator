@@ -35,8 +35,6 @@ func ConfigPOST(c *gin.Context) {
 	
 	//fmt.Println("execution = " + execution)
 	if execution == "true" {
-		s = data.Status{Code: 200, Text: "start execution"}
-		c.JSON(200, s)
 		
 		if (data.GlobalConfig.WordToStartWith != "" && data.GlobalConfig.WordToStartWithNext == "") {
 			data.GlobalConfig.WordToStartWithNext = data.GlobalConfig.WordToStartWith
@@ -46,7 +44,11 @@ func ConfigPOST(c *gin.Context) {
 		} else {
 			s = data.Status{Code: 422, Text: "missing data"}
 			c.JSON(200, s)
+			return
 		}
+		
+		s = data.Status{Code: 200, Text: "start execution"}
+		c.JSON(200, s)
 	} else if execution == "false" {
 		data.GlobalConfig.RequestExecution = false
 		
