@@ -1,46 +1,50 @@
 package main
 
 import (
-	routers "github.com/mazeForGit/WordlistExtractor/routers"
+	"gowebapp/routers"
+	"gowebapp/data"
+	// "gowebapp/plugins" if you create your own plugins import them here
 	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/static"
 	log "github.com/sirupsen/logrus"
 	"os"
+	//"github.com/gin-contrib/pprof"
 )
 
 func port() string {
 	port := os.Getenv("PORT")
 	if len(port) == 0 {
-		port = "5000"
+		port = "8080"
 	}
 	return ":" + port
 }
 
 func main() {
-
+	
 	log.SetFormatter(&log.JSONFormatter{})
 	log.SetOutput(os.Stdout)
 
 	router := gin.Default()
 	router.RedirectTrailingSlash = false
 
+	//pprof.Register(router)
+
 	router.LoadHTMLGlob("public/*.html")
 	router.Use(static.Serve("/", static.LocalFile("./public", false)))
 	router.GET("/", routers.Index)
+	router.GET("/index", routers.Index)
 	router.NoRoute(routers.NotFoundError)
 	router.GET("/500", routers.InternalServerError)
-	//router.GET("/health", routers.HealthGET)
+	router.GET("/health", routers.HealthGET)
 
-	router.GET("/words", routers.WordsGET)
-	router.POST("/words", routers.WordsPOST)
-	router.GET("/words/:id", routers.WordsByIdGET)
-	router.DELETE("/words/:id", routers.WordsByIdDELETE)
-	router.GET("/tests", routers.TestsGET)
-	router.GET("/wordlist", routers.WordListGET)
-	router.PUT("/wordlist", routers.WordListPUT)
-	router.DELETE("/wordlist", routers.WordListDELETE)
+	router.GET("/config", routers.ConfigGET)
+	router.POST("/config", routers.ConfigPOST)
+	router.PUT("/config", routers.ConfigPUT)
 
+	log.Info("Starting background process")
+	go data.ExecuteLongRunningTaskOnRequest()
+	
 	log.Info("Starting gowebapp on port " + port())
-
 	router.Run(port())
+	
 }

@@ -1,0 +1,66 @@
+package routers
+
+import (
+	"testing"
+	"net/http/httptest"
+	"net/http"
+	"github.com/gin-gonic/gin"
+	"encoding/json"
+	"gowebapp/data"
+	"bytes"
+)
+// use
+// go test -v ./routers -run Test
+//
+func Test_ConfigGET_emptyData(t *testing.T) {
+	router := gin.Default()
+	router.GET("/config", ConfigGET)
+
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest("GET", "/config", nil)
+	router.ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("You received a %v error.", w.Code)
+	}
+
+	json.Unmarshal(w.Body.Bytes(), &data.GlobalConfig)
+
+	if data.GlobalConfig.WordListUrl != "" {
+		t.Errorf("expected empty config")
+	}
+}
+func Test_ConfigPOST_validData(t *testing.T) {
+	router := gin.Default()
+	router.POST("/config", ConfigPOST)
+
+	wrd := data.Config{
+			RequestExecution: false, 
+			WordListUrl: "test", 
+			WordListExtractorUrl: "test", 
+			WordToStartWith: "test",
+    		WordToStartWithNext: "test",
+			CountWordsRead: 0,
+			CountWordsDetected: 0,
+    		CountWordsRequested: 0,
+    		CountWordsInserted: 0}
+
+	payload, err := json.Marshal(wrd)
+
+	if err != nil {
+		w := httptest.NewRecorder()
+		req := httptest.NewRequest("POST", "/config", bytes.NewBuffer(payload))
+		router.ServeHTTP(w, req)
+
+		if w.Code != http.StatusOK {
+			t.Fatalf("You received a %v error.", w.Code)
+		}
+
+		var s data.Status
+		json.Unmarshal(w.Body.Bytes(), &s)
+
+		if s.Code != 200 && s.Text != "entity added" {
+			t.Errorf("got wrong response .. code=%v, text=%s", s.Code, s.Text)
+		}
+	}
+}

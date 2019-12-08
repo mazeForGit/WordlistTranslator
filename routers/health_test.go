@@ -9,7 +9,7 @@ import (
 
 func TestHealth(t *testing.T) {
 	router := gin.Default()
-	router.GET("/health_NOT", HealthGET)
+	router.GET("/health", HealthGET)
 
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest("GET", "/health", nil)
