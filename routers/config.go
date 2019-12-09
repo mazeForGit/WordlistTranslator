@@ -2,8 +2,10 @@ package routers
 
 import (
 	//"strconv"
+	
 	"github.com/gin-gonic/gin"
-	data "WordlistExtractor/data"
+	
+	data "github.com/mazeForGit/WordlistExtractor/data"
 )
 func ConfigGET(c *gin.Context) {
 	c.JSON(200, data.GlobalConfig)

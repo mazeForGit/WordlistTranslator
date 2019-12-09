@@ -1,14 +1,16 @@
 package main
 
 import (
-	"WordlistExtractor/routers"
-	"WordlistExtractor/data"
+	"os"
+	
 	// "gowebapp/plugins" if you create your own plugins import them here
 	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/static"
 	log "github.com/sirupsen/logrus"
-	"os"
 	//"github.com/gin-contrib/pprof"
+	
+	routers "github.com/mazeForGit/WordlistExtractor/routers"
+	data "github.com/mazeForGit/WordlistExtractor/data"
 )
 
 func port() string {
