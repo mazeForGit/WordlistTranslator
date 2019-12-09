@@ -1,8 +1,8 @@
 package main
 
 import (
-	"gowebapp/routers"
-	"gowebapp/data"
+	"WordlistExtractor/routers"
+	"WordlistExtractor/data"
 	// "gowebapp/plugins" if you create your own plugins import them here
 	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/static"

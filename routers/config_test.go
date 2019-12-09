@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"github.com/gin-gonic/gin"
 	"encoding/json"
-	"gowebapp/data"
+	data "WordlistExtractor/data"
 	"bytes"
 )
 // use

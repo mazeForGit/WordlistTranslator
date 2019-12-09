@@ -3,9 +3,7 @@ package routers
 import (
 	//"strconv"
 	"github.com/gin-gonic/gin"
-	"gowebapp/data"
-	//"fmt"
-	//"io/ioutil"
+	data "WordlistExtractor/data"
 )
 func ConfigGET(c *gin.Context) {
 	c.JSON(200, data.GlobalConfig)
