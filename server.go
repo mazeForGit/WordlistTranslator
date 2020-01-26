@@ -9,8 +9,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	//"github.com/gin-contrib/pprof"
 	
-	routers "github.com/mazeForGit/WordlistExtractor/routers"
-	data "github.com/mazeForGit/WordlistExtractor/data"
+	routers "github.com/mazeForGit/WordlistTranslator/routers"
+	data "github.com/mazeForGit/WordlistTranslator/data"
 )
 
 func port() string {

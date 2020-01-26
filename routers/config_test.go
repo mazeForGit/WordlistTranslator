@@ -6,8 +6,9 @@ import (
 	"net/http"
 	"github.com/gin-gonic/gin"
 	"encoding/json"
-	data "WordlistExtractor/data"
 	"bytes"
+	
+	data "github.com/mazeForGit/WordlistTranslator/data"
 )
 // use
 // go test -v ./routers -run Test
