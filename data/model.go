@@ -13,7 +13,131 @@ import (
 )
 
 var GlobalConfig Config
+var GlobalWordList WordList
 
+func ExecuteLongRunningTaskOnRequest() {
+	
+	GlobalConfig.WordListUrl
+	GlobalConfig.WordListExtractorUrl = ""https://dict.tu-chemnitz.de"
+	GlobalConfig.RequestExecution = true
+	
+	// load existing wordlist
+	ReadGlobalWordlistFromRemote()
+	
+	for {
+		//PrintMemUsage()
+		time.Sleep(2 * time.Second)
+		
+		if GlobalConfig.RequestExecution {
+			for i := 0; i < len(GlobalWordList); i++ {
+				if GlobalWordList[i].Tests != nil {
+					readNextWordFromLink(GlobalConfig.WordListExtractorUrl, GlobalWordList[i].Name)
+				}
+			}
+		}
+	}
+}
+func ReadNextWordFromLink(baseUrl string, nextWord string) {
+	fmt.Println("ReadNextWordFromLink ..")
+	fmt.Println("baseUrl = " + baseUrl)
+	fmt.Println("nextWord = " + nextWord)
+	nextWordLink = baseUrl + "/deutsch-englisch/" + nextWord + ".html"
+	fmt.Println("nextWordLink = " + nextWordLink)
+	
+	var listOfGermanWords []string
+	var listOfEnglishWords []string
+
+	resp, err := http.Get(nextWordLink)
+	check(err)
+	
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+
+	//fmt.Println(".. OnResponse")
+	contentType := resp.Header.Get("Content-Type")
+	//fmt.Println("Content-Type=", contentType)
+		
+	if strings.HasPrefix(contentType, "text") {
+		var t string
+		t = string(body)
+		
+		//fmt.Println(t)
+			
+		// from: https://godoc.org/github.com/PuerkitoBio/goquery
+		// from: https://stackoverflow.com/questions/44441665/how-to-extract-only-text-from-html-in-golang
+		p := strings.NewReader(t)
+		doc, _ := goquery.NewDocumentFromReader(p)
+		doc.Find(".adj .r").Each(func(i int, s *goquery.Selection) { 
+			//fmt.Println("{adj} = ",s.Text())
+			s.Find("a").Each(func(i int, s *goquery.Selection) { 
+				wtext := s.Text()
+				wlink, _ := s.Attr("href")
+				if wtext != "" {
+					//fmt.Printf("word = '%s' , link = %s\n", wtext, wlink)
+					if strings.HasPrefix(wlink, "/deutsch-englisch/") {
+						//fmt.Printf("german: word = '%s' , link = %s\n", wtext, wlink)
+						if !contains(listOfGermanWords, wtext) {
+							listOfGermanWords = append(listOfGermanWords, wtext)
+						}
+					} else if strings.HasPrefix(wlink, "/english-german/") {
+						//fmt.Printf("english: word = '%s' , link = %s\n", wtext, wlink)
+						if !contains(listOfEnglishWords, wtext) {
+							listOfEnglishWords = append(listOfEnglishWords, wtext)
+						}
+					}
+				}
+			})
+		})
+		DoSomethingWithTheResult(listOfGermanWords, listOfEnglishWords)
+	}
+}
+func DoSomethingWithTheResult(listOfGermanWords []string, listOfEnglishWords []string) {
+	fmt.Println("DoSomethingWithTheResult ..")
+
+	fmt.Println("listOfGermanWords ..")
+	fmt.Println(listOfGermanWords)
+	fmt.Println("listOfEnglishWords ..")
+	fmt.Println(listOfEnglishWords)					
+}
+func contains(s []string, e string) bool {
+    for _, a := range s {
+        if a == e {
+            return true
+        }
+    }
+    return false
+}
+func ReadGlobalWordlistFromRemote() error {
+	fmt.Println("ReadGlobalWordlist")
+	fmt.Println("have GlobalWordlist.Words = " + strconv.Itoa(len(GlobalWordList.Words)))
+	
+    var err error
+	var resp *http.Response
+	var body []byte
+	var requestUrl string = ""
+	
+	// would reduce the number of words
+    //requestUrl = GlobalConfig.WordListUrl + "/wordlist?testOnly=true"
+	// but here we need all to find out which words without test are used as well
+	requestUrl = GlobalConfig.WordListUrl + "/words?format=json"
+    fmt.Println("connect to wordlist and get words with tests = " + requestUrl)
+    resp, err = http.Get(requestUrl)
+    if err != nil {
+        return err
+    }
+
+    defer resp.Body.Close()
+    body, err = ioutil.ReadAll(resp.Body)
+    if err != nil {
+        return err
+    }
+    
+    //json.Unmarshal(body, &GlobalWordList)
+	json.Unmarshal(body, &GlobalWordList.Words)
+    fmt.Println("got GlobalWordList.Words = " + strconv.Itoa(len(GlobalWordList.Words)))
+
+	return nil
+}
 func PrintMemUsage() {
 	// from: https://golangcode.com/print-the-current-memory-usage/
     var m runtime.MemStats
@@ -26,188 +150,4 @@ func PrintMemUsage() {
 }
 func bToMb(b uint64) uint64 {
     return b / 1024 / 1024
-}
-func ExecuteLongRunningTaskOnRequest() {
-	
-	for {
-		//PrintMemUsage()
-		time.Sleep(2 * time.Second)
-		if GlobalConfig.RequestExecution {
-			
-			readNextWordFromLink()
-			
-			if (GlobalConfig.WordToStartWithNext == GlobalConfig.WordToStartWith) {
-				break
-			}
-		}
-	}
-}
-func readNextWordFromLink() {
-
-	var s Status
-	var nextWordLink string = ""
-	var err error
-	var client *http.Client
-	var resp *http.Response
-	var req *http.Request
-	var body, payload []byte
-	var contentType string
-	var word string = ""
-	var wordtype string = ""
-	var wordbreak string = ""
-	var nextWord string = ""
-	var requestUrl string = ""
-	var wrd Word
-	var t string
-	var p *strings.Reader	
-	var doc *goquery.Document
-	
-			nextWordLink = GlobalConfig.WordListExtractorUrl + "/" + GlobalConfig.WordToStartWithNext
-			//fmt.Println("ReadNextWordFromLink = " + nextWordLink)
-
-			resp, err = http.Get(nextWordLink)
-			if err != nil {
-				fmt.Println(err.Error())
-				return
-			}
-			
-			defer resp.Body.Close()
-			body, err = ioutil.ReadAll(resp.Body)
-			if err != nil {
-				fmt.Println(err.Error())
-				return
-			}
-			
-			//fmt.Println(".. OnResponse")
-			contentType = resp.Header.Get("Content-Type")
-			//fmt.Println("Content-Type=", contentType)
-				
-			if strings.HasPrefix(contentType, "text") {
-					
-				t = string(body)
-				
-				//fmt.Println(t)
-				// from: https://stackoverflow.com/questions/44441665/how-to-extract-only-text-from-html-in-golang
-				p = strings.NewReader(t)
-				doc, _ = goquery.NewDocumentFromReader(p)
-
-				word = ""
-				wordtype = ""
-				wordbreak = ""
-				nextWord = ""
-							
-				// find the items
-				doc.Find(".dwdswb-ft .dwdswb-ft-lemmaansatz").Each(func(i int, s *goquery.Selection) {
-					// for each item found
-							
-					word = s.Text()
-					word = strings.TrimSpace(word)
-					//fmt.Println("word = ",word)
-				})
-						
-				doc.Find(".dwdswb-ft .dwdswb-ft-blocks .dwdswb-ft-block").Each(func(i int, s *goquery.Selection) { 
-					//fmt.Println("s = ",s.Text())
-							
-					grammar := s.Find(".dwdswb-ft-blocklabel")
-					//fmt.Println("grammar = ",grammar.Text())
-					if (grammar.Text() == "Grammatik") {
-						wordtype = s.Find(".dwdswb-ft-blocktext").Text()
-						wordtype = strings.TrimSpace(wordtype)
-						//fmt.Println("wordtype = ",wordtype)
-					}
-					if (grammar.Text() == "Worttrennung") {
-						wordbreak = s.Find(".dwdswb-ft-blocktext").Text()
-						wordbreak = strings.TrimSpace(wordbreak)
-						//fmt.Println("wordbreak = ",wordbreak)
-					}
-				})
-						
-				doc.Find(".table-condensed td").Each(func(i int, s *goquery.Selection) {
-					// for each item found
-							
-					//fmt.Println("s = ",s.Text())
-					style, _ := s.Attr("style")
-					//fmt.Println("style = ",style)
-					if style == "text-align:right" {
-						firstRow := s.Find("a").First()
-						nextWord = firstRow.Text()
-						nextWord = strings.TrimSpace(nextWord)
-						//fmt.Println("firstRow = nextWord = ",firstRow.Text())
-						link, _ := firstRow.Attr("href")
-						nextWordLink = strings.TrimSpace(link)
-						//fmt.Println("link = ",link)
-
-						i = strings.LastIndexAny(nextWordLink, "/")
-						GlobalConfig.WordToStartWithNext = nextWordLink[i+1:]
-						//fmt.Println("WordToStartWithNext = ", GlobalConfig.WordToStartWithNext)
-					}
-				})
-				GlobalConfig.CountWordsRead++
-				//fmt.Println("word=",word,",wordtype=",wordtype,",wordbreak=",wordbreak,",nextWord=",nextWord)
-				if strings.HasPrefix(wordtype, "Adjektiv") {
-					GlobalConfig.CountWordsDetected++
-					//fmt.Println("word=",word,",wordtype=",wordtype,",wordbreak=",wordbreak,",nextWord=",nextWord)
-					//fmt.Println("CountWordsRead=",GlobalConfig.CountWordsRead,",CountWordsDetected=",GlobalConfig.CountWordsDetected,",CountWordsRequested=",GlobalConfig.CountWordsRequested,",CountWordsInserted=",GlobalConfig.CountWordsInserted)
-		
-					// do something with the result
-					GlobalConfig.CountWordsLookup++
-					requestUrl = GlobalConfig.WordListUrl + "/words?name=" + word
-					fmt.Println("connect to wordlist and find out if word exists using = " + requestUrl)
-					resp, err = http.Get(requestUrl)
-					if err != nil {
-						fmt.Println(err.Error())
-						return
-					}
-					
-					defer resp.Body.Close()
-					body, err = ioutil.ReadAll(resp.Body)
-					if err != nil {
-						fmt.Println(err.Error())
-						return
-					}
-					//fmt.Println("body = " + string(body))
-
-					s.Text = ""
-					json.Unmarshal(body, &s)
-					if s.Text == "not found name = " + word {
-						GlobalConfig.CountWordsRequested++
-						fmt.Println("connect to wordlist and add word = " + word)
-
-						wrd = Word{Id: 0, Name: word, New: true, Occurance: 0, Tests: nil}
-						payload, err = json.Marshal(wrd)
-						//fmt.Println("payload = " + string(payload))
-
-						requestUrl = GlobalConfig.WordListUrl + "/words"
-						req, err = http.NewRequest("POST", requestUrl, bytes.NewBuffer(payload))
-						if err != nil {
-							fmt.Println(err.Error())
-							return
-						}
-						
-						req.Header.Set("Content-Type", "application/json")
-						client = &http.Client{}
-						resp, err = client.Do(req)
-						if err != nil {
-							fmt.Println(err.Error())
-							return
-						}
-
-						defer resp.Body.Close()
-						body, err = ioutil.ReadAll(resp.Body)
-						if err != nil {
-							fmt.Println(err.Error())
-							return
-						}
-						//fmt.Println("body = " + string(body))
-
-						s.Text = ""
-						json.Unmarshal(body, &s)
-						if s.Text == "entity added" {
-							GlobalConfig.CountWordsInserted++
-						} else {
-							fmt.Println("unexpected .. something went wrong")	
-						}
-					}
-				}
-			}
 }

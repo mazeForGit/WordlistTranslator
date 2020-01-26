@@ -13,7 +13,6 @@ type Test struct {
     Name  string	`json:"name"`
     Category  string	`json:"category"`
 }
-
 type Word struct {
 	Id int	`json:"id"`
     Name  string	`json:"name"`
@@ -21,7 +20,11 @@ type Word struct {
 	New bool	`json:"new"`
 	Tests []Test	`json:"tests"`
 }
-
+type WordList struct {
+	Session SessionStatus	`json:"session"`
+	Words []Word	`json:"words"`
+	Tests []Test	`json:"tests"`
+}
 type Config struct {
     RequestExecution  bool	`json:"requestexecution"`
     WordListUrl  string	`json:"wordlisturl"`
