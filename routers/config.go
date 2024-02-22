@@ -5,26 +5,26 @@ import (
 	
 	"github.com/gin-gonic/gin"
 	
-	data "github.com/mazeForGit/WordlistTranslator/data"
+	data "github.com/mazeForGit/WordlistTranslator/model"
 )
 func ConfigGET(c *gin.Context) {
-	c.JSON(200, data.GlobalConfig)
+	c.JSON(200, model.GlobalConfig)
 }
 func ConfigPUT(c *gin.Context) {
-	var s data.Status
+	var s model.Status
 	
-	err := c.BindJSON(&data.GlobalConfig)
+	err := c.BindJSON(&model.GlobalConfig)
 	if err != nil {
-		s = data.Status{Code: 422, Text: "unprocessable entity"}
+		s = model.Status{Code: 422, Text: "unprocessable entity"}
 		c.JSON(422, s)
 		return
 	}
 	
-	s = data.Status{Code: 200, Text: "entity added"}
+	s = model.Status{Code: 200, Text: "entity added"}
 	c.JSON(200, s)
 }
 func ConfigPOST(c *gin.Context) {
-	var s data.Status
+	var s model.Status
 	var vars map[string][]string
 	vars = c.Request.URL.Query()
 	var execution string = ""
@@ -36,26 +36,26 @@ func ConfigPOST(c *gin.Context) {
 	//fmt.Println("execution = " + execution)
 	if execution == "true" {
 		
-		if (data.GlobalConfig.WordToStartWith != "" && data.GlobalConfig.WordToStartWithNext == "") {
-			data.GlobalConfig.WordToStartWithNext = data.GlobalConfig.WordToStartWith
+		if (model.GlobalConfig.WordToStartWith != "" && model.GlobalConfig.WordToStartWithNext == "") {
+			model.GlobalConfig.WordToStartWithNext = model.GlobalConfig.WordToStartWith
 		}
-		if (data.GlobalConfig.WordToStartWith != "" && data.GlobalConfig.WordToStartWithNext != "") {
-			data.GlobalConfig.RequestExecution = true
+		if (model.GlobalConfig.WordToStartWith != "" && model.GlobalConfig.WordToStartWithNext != "") {
+			model.GlobalConfig.RequestExecution = true
 		} else {
-			s = data.Status{Code: 422, Text: "missing data"}
+			s = model.Status{Code: 422, Text: "missing data"}
 			c.JSON(200, s)
 			return
 		}
 		
-		s = data.Status{Code: 200, Text: "start execution"}
+		s = model.Status{Code: 200, Text: "start execution"}
 		c.JSON(200, s)
 	} else if execution == "false" {
-		data.GlobalConfig.RequestExecution = false
+		model.GlobalConfig.RequestExecution = false
 		
-		s = data.Status{Code: 200, Text: "stop execution"}
+		s = model.Status{Code: 200, Text: "stop execution"}
 		c.JSON(200, s)
 	} else {
-		s = data.Status{Code: 422, Text: "unknown request"}
+		s = model.Status{Code: 422, Text: "unknown request"}
 		c.JSON(422, s)
 	}
 }

@@ -3,14 +3,12 @@ package main
 import (
 	"os"
 	
-	// "gowebapp/plugins" if you create your own plugins import them here
 	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/static"
 	log "github.com/sirupsen/logrus"
-	//"github.com/gin-contrib/pprof"
 	
 	routers "github.com/mazeForGit/WordlistTranslator/routers"
-	data "github.com/mazeForGit/WordlistTranslator/data"
+	data "github.com/mazeForGit/WordlistTranslator/model"
 )
 
 func port() string {
@@ -44,7 +42,7 @@ func main() {
 	router.PUT("/config", routers.ConfigPUT)
 
 	log.Info("Starting background process")
-	go data.ExecuteLongRunningTaskOnRequest()
+	go model.ExecuteLongRunningTaskOnRequest()
 	
 	log.Info("Starting gowebapp on port " + port())
 	router.Run(port())
